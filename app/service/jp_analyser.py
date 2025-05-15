@@ -3,7 +3,7 @@ from crewai import Agent, Task, Crew
 from app.llm.provider import GoogleProvider
 from app.core.logging import get_logger
 from app.core.config import settings
-from app.utils.ymal_config import  load_yaml_configs
+from app.utils.yaml_config import  load_yaml_configs
 from crewai_tools import ScrapeWebsiteTool, SerperDevTool
 from typing import Dict, Any
 

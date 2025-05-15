@@ -12,7 +12,7 @@ from crewai import Agent, Task, Crew
 
 from app.llm.provider import GoogleProvider
 from app.utils.parse_pdf import extract_text_from_pdf
-from app.utils.ymal_config import load_yaml_configs
+from app.utils.yaml_config import load_yaml_configs
 from app.core.logging import get_logger
 from app.api.error_handlers import CustomException
 
