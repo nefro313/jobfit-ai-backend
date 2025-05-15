@@ -1,0 +1,114 @@
+parse_task:
+  description: |
+    **Goal:** Read the `{resume_text}` and output **complete**, **valid JSON** matching this schema.  
+    **Instructions:**  
+    1. Always return all keys, even if the value is an empty list.  
+    2. Do not include any extra commentary or reasoning.  
+    3. On extraction failure, return an empty JSON object: `{}`.  
+    **Schema:**  
+      - skills (array of strings): all technical and soft skills identified.  
+      - tools_and_technologies (array of strings): software, frameworks, hardware.  
+      - certifications (array of strings): official credentials.  
+      - work_experience (array of objects): each with `company`, `title`, `duration`.  
+      - projects (array of objects): each with `name`, `summary`, `technologies_used`.  
+      - education (array of objects): each with `degree`, `institution`, `year`.  
+  expected_output: |
+    {
+      "skills": [...],
+      "tools_and_technologies": [...],
+      "certifications": [...],
+      "work_experience": [...],
+      "projects": [...],
+      "education": [...]
+    }
+
+jd_analysis_task:
+  description: |
+    **Goal:** Analyze `{job_description}` and return **structured JSON**.  
+    **Instructions:**  
+    - Always include all keys (use `[]` when none).  
+    - No explanations—only JSON.  
+    - If you can’t parse, return `{}`.  
+    **Schema:**  
+      - mandatory_skills (array of strings)  
+      - preferred_qualifications (array of strings)  
+      - tools_and_software (array of strings)  
+      - experience_level (string, e.g., "3-5 years in Data Science")  
+      - domain_keywords (array of strings)  
+  expected_output: |
+    {
+      "mandatory_skills": [...],
+      "preferred_qualifications": [...],
+      "tools_and_software": [...],
+      "experience_level": "...",
+      "domain_keywords": [...]
+    }
+
+
+match_task:
+  description: |
+    **Goal:** Compare resume vs. JD JSON and output **matches** in JSON.  
+    **Instructions:**  
+    - Identify `direct_matches`, `semantic_equivalents`, `partial_matches`, and `missing_critical_keywords`.  
+    - Use concise lists (empty if none).  
+    - No extra keys or commentary.  
+  expected_output: |
+    {
+      "direct_matches": [...],
+      "semantic_equivalents": [...],
+      "partial_matches": [...],
+      "missing_critical_keywords": [...]
+    }
+
+
+score_task:
+  description: |
+    **Goal:** Compute an overall fit percentage and sub‐scores.  
+    **Weights:**  
+      • keyword_match: 40%  
+      • experience_alignment: 30%  
+      • project_relevance: 20%  
+      • education_certifications: 10%  
+    **Instructions:**  
+      - Include `overall_score` (0–100) and individual `scores`.  
+      - Return an empty JSON (`{}`) if data missing.  
+  expected_output: |
+    {
+      "overall_score": 0-100,
+      "scores": {
+        "keyword_match": 0-100,
+        "experience_alignment": 0-100,
+        "project_relevance": 0-100,
+        "education_certifications": 0-100
+      }
+    }
+
+
+feedback_task:
+  description: |
+    **Goal:** Generate section‐wise feedback based on parsed data and scores.  
+    **Sections:**  
+      1. ATS Score Analysis  
+      2. Skills Gap Analysis  
+      3. Experience Restructuring Advice  
+      4. Project Presentation Tips  
+      5. Certification Recommendations  
+    **Instructions:**  
+      - Present feedback in markdown with clear headings.  
+      - Use bullet lists.  
+      - If no insights for a section, state “No recommendations.”  
+  expected_output: |
+    ### ATS Score Analysis
+    - …
+
+    ### Skills Gap Analysis
+    - …
+
+    ### Experience Restructuring Advice
+    - …
+
+    ### Project Presentation Tips
+    - …
+
+    ### Certification Recommendations
+    - …
