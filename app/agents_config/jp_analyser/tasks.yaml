@@ -1,0 +1,53 @@
+scrape_job_task:
+  description: >
+    Retrieve and structure information from the job posting at the provided URL: {job_url}.
+    
+    Extract and clearly label the following details:
+    1. Job Title
+    2. Required Qualifications and Skills
+    3. Responsibilities and Duties
+    4. Experience Requirements
+    5. Education Requirements
+    6. Benefits and Perks
+    7. Application Deadline (if specified)
+    8. Company Name (label as "Company Name: [NAME]")
+
+    Ensure the information is organized for easy comprehension and highlights the most critical aspects of the job posting.
+  expected_output: >
+    A structured summary of the job posting, detailing the extracted information as specified.
+
+research_company_task:
+  description: >
+    Conduct thorough research on the company '{company_name}' to compile information beneficial for job applicants.
+
+    Focus on gathering:
+    1. Company Overview (size, industry, headquarters location)
+    2. Company Culture and Core Values
+    3. Recent News and Developments
+    4. Key Products or Services
+    5. Company Reputation and Employee Reviews
+    6. Leadership Team Information
+    7. Insights into the Interview Process (if available)
+
+    Present the findings in a format that aids candidates in understanding the company and preparing for interviews.
+  expected_output: >
+    A comprehensive report detailing the company's background, culture, recent activities, offerings, reputation, leadership, and interview insights.
+
+compile_insights_task:
+  description: >
+    Integrate the job posting details and company research to create an insightful report for job seekers.
+
+    Utilize the following inputs:
+    - Job Posting Details: {job_details}
+    - Company Research: {company_research}
+
+    The report should encompass:
+    1. A concise summary of the job role
+    2. Key insights about the company relevant to applicants
+    3. Essential skills and qualifications to emphasize
+    4. Strategic advice for interview preparation
+    5. Identification of any potential red flags or considerations
+
+    Format the report for clarity and prioritize the most impactful information to assist candidates effectively.
+  expected_output: >
+    A well-structured markdown report combining job and company insights, offering strategic guidance for applicants.
