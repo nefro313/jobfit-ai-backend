@@ -1,0 +1,58 @@
+{
+  "name": "Robin K Philip",
+  "about_me": "Passionate Machine Learning Engineer with a strong foundation in Python and expertise in building data-driven solutions, particularly for document understanding in healthcare. Proficient in OCR, computer vision, and multimodal models with hands-on experience in developing scalable and efficient ML models. Eager to apply skills in parsing key information from scanned documents, improving document quality, and building next-generation multimodal models to enhance document understanding performances at Autonomize AI.",
+  "contact_info": {
+    "address": "Alleppey, Kerala",
+    "phone": null,
+    "email": "robinkphilip2001@gmail.com",
+    "github": "https://github.com/nefro313",
+    "linkedin": "in/robinkphilip"
+  },
+  "education": [
+    {
+      "degree": "Self-Taught Developer",
+      "institution": null,
+      "start_date": null,
+      "end_date": null
+    }
+  ],
+  "experience": [
+    {
+      "job_title": "Machine Learning Engineer",
+      "company": null,
+      "start_date": null,
+      "end_date": null,
+      "achievements": [
+        "Transformed raw data into actionable insights using Python, Scikit-learn, NumPy, and Pandas.",
+        "Designed and developed scalable ML models for various applications.",
+        "Focused on document understanding, including OCR and computer vision tasks.",
+        "Experience in parsing key information from scanned documents and improving document quality."
+      ]
+    }
+  ],
+  "skills": [
+    "Python",
+    "OCR (PaddlePaddle OCR, Tesseract)",
+    "Computer Vision",
+    "Transformer-based vision models (Donut, pix2struct, LayoutLM)",
+    "PDF processing (PDFMiner, PyPDF2, pdfplumber)",
+    "Text extraction (Tabula, Camelot, Textract)",
+    "Scikit-learn",
+    "NumPy",
+    "Pandas",
+    "Django",
+    "Kafka",
+    "Spark",
+    "MongoDB",
+    "TensorFlow",
+    "PyTorch"
+  ],
+  "soft_skills": [
+    "Problem Solving",
+    "Teamwork",
+    "Communication",
+    "Owner Mentality",
+    "Curious",
+    "Experimental"
+  ]
+}
