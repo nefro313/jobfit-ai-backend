@@ -1,0 +1,18 @@
+crewai>= 0.118.0
+pydantic>=2.11.4
+python-dotenv>=1.1.0
+fastapi >= 0.115.12
+uvicorn>=0.34.2
+
+PyMuPDF>=1.25.5
+pydantic-settings >=2.9.1
+python-multipart>=0.0.5
+langchain>=0.3.25
+langchain-community>=0.3.23
+langchain-huggingface>=0.2.0
+sentence-transformers>=4.1.0
+faiss-cpu>=1.11.0
+pypdf>=5.4.0
+firecrawl-py>=2.5.4
+crewai-tools>=0.44.0
+google-generativeai>=0.8.5
