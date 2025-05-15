@@ -18,6 +18,7 @@ from app.api.error_handlers import CustomException
 
 logger = get_logger(__name__)
 
+# yaml file path initialize
 yaml_file_path = {
     'agents': 'app/agents_config/ats_checker_config/agents.yaml',
     'tasks': 'app/agents_config/ats_checker_config/tasks.yaml'
