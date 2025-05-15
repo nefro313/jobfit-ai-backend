@@ -19,8 +19,8 @@ from app.api.error_handlers import CustomException
 logger = get_logger(__name__)
 
 CONFIG_PATHS = {
-    'agents': 'app/agents/ats_checker_config/agents.yaml',
-    'tasks': 'app/agents/ats_checker_config/tasks.yaml'
+    'agents': 'app/agents_config/ats_checker_config/agents.yaml',
+    'tasks': 'app/agents_config/ats_checker_config/tasks.yaml'
 }
 
 class ATSCheckerService:
