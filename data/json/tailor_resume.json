@@ -1,9 +1,9 @@
 {
   "name": "Robin K Philip",
-  "about_me": "Passionate Machine Learning Engineer with a strong foundation in Python and expertise in building data-driven solutions, particularly for document understanding in healthcare. Proficient in OCR, computer vision, and multimodal models with hands-on experience in developing scalable and efficient ML models. Eager to apply skills in parsing key information from scanned documents, improving document quality, and building next-generation multimodal models to enhance document understanding performances at Autonomize AI.",
+  "about_me": "Highly motivated Machine Learning Engineer specializing in Computer Vision and Document Understanding, with hands-on experience in OCR and multimodal models. Proficient in Python and familiar with OCR libraries like PaddlePaddle OCR and Tesseract. Eager to apply expertise in developing and scaling AI solutions within the healthcare domain. Committed to collaborative problem-solving and continuous learning to drive impactful results.",
   "contact_info": {
-    "address": "Alleppey, Kerala",
-    "phone": null,
+    "address": "",
+    "phone": "",
     "email": "robinkphilip2001@gmail.com",
     "github": "https://github.com/nefro313",
     "linkedin": "in/robinkphilip"
@@ -11,48 +11,52 @@
   "education": [
     {
       "degree": "Self-Taught Developer",
-      "institution": null,
-      "start_date": null,
-      "end_date": null
+      "institution": "",
+      "start_date": "",
+      "end_date": ""
     }
   ],
   "experience": [
     {
       "job_title": "Machine Learning Engineer",
-      "company": null,
-      "start_date": null,
-      "end_date": null,
+      "company": "Various Projects",
+      "start_date": "",
+      "end_date": "",
       "achievements": [
-        "Transformed raw data into actionable insights using Python, Scikit-learn, NumPy, and Pandas.",
-        "Designed and developed scalable ML models for various applications.",
-        "Focused on document understanding, including OCR and computer vision tasks.",
-        "Experience in parsing key information from scanned documents and improving document quality."
+        "Developed sales prediction models using Python, providing actionable insights for business decision-making.",
+        "Built a student CRM system using Django, demonstrating the ability to create impactful technology solutions.",
+        "Hands-on experience with OCR and computer vision based document extraction tasks.",
+        "Experience with transformer based vision models and multi-modal models.",
+        "Experience integrating OCR and layout detection into end-to-end document processing pipelines."
       ]
     }
   ],
   "skills": [
     "Python",
-    "OCR (PaddlePaddle OCR, Tesseract)",
+    "OCR (PaddlePaddle OCR, Tesseract, Adobe PDF Library)",
     "Computer Vision",
-    "Transformer-based vision models (Donut, pix2struct, LayoutLM)",
-    "PDF processing (PDFMiner, PyPDF2, pdfplumber)",
-    "Text extraction (Tabula, Camelot, Textract)",
-    "Scikit-learn",
-    "NumPy",
-    "Pandas",
+    "Machine Learning (Scikit-learn, NumPy, Pandas)",
+    "Transformer Models (Donut, Pix2struct, LayoutLM)",
+    "PDF Processing (PDFMiner, PyPDF2, pdfplumber)",
+    "Text Extraction & Structuring (Tabula, Camelot, Textract)",
     "Django",
+    "REST API",
+    "Scalable Distributed Systems",
+    "Data Analysis",
+    "Model Building",
+    "TensorFlow",
+    "PyTorch",
     "Kafka",
     "Spark",
-    "MongoDB",
-    "TensorFlow",
-    "PyTorch"
+    "MongoDB"
   ],
   "soft_skills": [
-    "Problem Solving",
-    "Teamwork",
-    "Communication",
     "Owner Mentality",
-    "Curious",
-    "Experimental"
+    "Curious and Experimental",
+    "Team Player",
+    "Excellent Communication",
+    "Problem Solver",
+    "Continuous Learner",
+    "Code Enthusiast"
   ]
 }
