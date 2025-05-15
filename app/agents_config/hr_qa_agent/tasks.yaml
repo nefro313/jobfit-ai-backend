@@ -1,0 +1,59 @@
+
+research_task:
+  description: |
+    Research the HR question `{query}`.  
+    1. Explain why HR asks this question.  
+    2. Extract 3–5 best practices or frameworks to use.  
+    3. Provide 2–3 concise bullet examples or mini‑scenarios.  
+  expected_output: |
+    **Why they ask:** …  
+    **Best practices:**  
+    - …  
+    - …  
+    **Examples:**  
+    - …  
+    - …
+
+formulation_task:
+  description: |
+    You will receive an HR interview question: `{query}`.
+    Use the following **zero‑shot example** as your *only* guide for format:
+
+    ---
+    **Q:** What do you consider to be your strongest and weakest points?  
+    **A:**  
+    Another tricky question up the HR’s sleeves, this is a direct hit to divulge your best and weakest qualities both as an individual and a professional. The interviewer wants to know more about your characteristics to judge if you are the right candidate for a particular job profile.  
+    While answering this question, always be honest. First, state your strongest qualities and skills that you think will match well with the job role. List your strengths in a connected manner to make it more cohesive.  
+    Ensure that you never mention any trait or skill you don’t possess since it can be counterproductive if the interviewer asks you to back your claim. Coming to the weakness part, do not state more than two weak traits. Talk about weaknesses that aren’t directly related to the job role and always say that you’re working to improve them.  
+    **Sample Answer:**  
+    “I think my greatest strengths are that I am a team player and master negotiator. I have excellent people skills. Some of my other strong points are that I’m a self‑motivated, fast learner. Whatever task I set out to do, I commit myself to it and complete it diligently. However, my biggest weakness is that I trust people quite easily. Also, sometimes I tend to overthink things, but I’m working on bettering myself constantly.”  
+    — Demo ends —
+    ---
+    
+    **Now**, craft your answer for `{query}` following that exact pattern:
+    1. **Brief framing**: why HR asks this question (2–3 sentences).  
+    2. **Answer tips**: 3–4 actionable guidelines (bullet points).  
+    3. **Sample Answer**: enclosed in quotes, **≤200 words**.  
+  expected_output: |
+    **Brief Framing:** …  
+    **Answer Tips:**  
+    - …  
+    - …  
+    - …  
+
+    **Sample Answer:**  
+    “…”
+
+qa_task:
+  description: |
+    Review the provided draft answer for `{query}`.  
+    1. Trim to ≤200 words.  
+    2. Ensure clarity, honesty, and relevance.  
+    3. Append 1–2 “Pro Tips” at the end.  
+  expected_output: |
+    **Final Polished Answer:**  
+    “…”  
+
+    **Pro Tips:**  
+    - …  
+    - …
