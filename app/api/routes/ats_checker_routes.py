@@ -14,7 +14,7 @@ from typing import Dict, Any
 
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Depends, Query, status
 from fastapi.responses import JSONResponse
-from app.schemas.ats_checket_validator.validator import JobDescriptionValidator,ATSCheckResponse,validate_resume_file
+from app.schemas.validator import JobDescriptionValidator,ATSCheckResponse,validate_resume_file
 from app.core.logging import get_logger
 from app.service.ats_checker_service import ATSCheckerService
 from app.api.error_handlers import CustomException
