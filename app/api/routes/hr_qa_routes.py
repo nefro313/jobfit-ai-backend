@@ -1,7 +1,7 @@
 import os
 from fastapi import APIRouter,Body,HTTPException, status
 from app.core.logging import get_logger
-from app.service.hr_qa import HRQuestionAnswerService
+from app.service.hr_qa_service import HRQuestionAnswerService
 from typing import Dict, Any
 
 router = APIRouter(
