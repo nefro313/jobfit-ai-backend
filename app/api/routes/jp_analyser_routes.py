@@ -1,7 +1,9 @@
+from typing import Any
+
 from fastapi import APIRouter, Body, HTTPException
+
 from app.core.logging import get_logger
 from app.service.jp_analyser import JobPostingAnalyzer
-from typing import Dict, Any
 
 router = APIRouter(
     prefix="/api/job-analysis",
@@ -22,7 +24,7 @@ analyzer = JobPostingAnalyzer()
     - Company research
     - Compiled insights report""",
     response_description="Job insights analysis report",
-    response_model=Dict[str, Any]
+    response_model=dict[str, Any]
 )
 async def analyze_job_posting(url: str = Body(...)):
     """
@@ -59,4 +61,4 @@ async def analyze_job_posting(url: str = Body(...)):
                 "message": "Failed to analyze job posting",
                 "error": str(e)
             }
-        )
+        ) from e

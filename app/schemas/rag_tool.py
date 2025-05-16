@@ -1,7 +1,9 @@
+from typing import Any
+
 from crewai.tools import BaseTool
-from pydantic import BaseModel, Field
-from typing import Any, List
 from langchain.schema import Document
+from pydantic import BaseModel, Field
+
 
 class RetrieverTool(BaseTool):
     """CrewAI tool wrapping a LangChain VectorStore retriever."""
@@ -20,7 +22,7 @@ class RetrieverTool(BaseTool):
 
     def _run(self, query: str) -> str:
         # Call the LangChain retriever
-        docs: List[Document] = self.retriever.invoke(query)
+        docs: list[Document] = self.retriever.invoke(query)
         return "\n\n".join([d.page_content for d in docs])
 
     async def _arun(self, query: str) -> str:

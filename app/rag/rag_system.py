@@ -5,7 +5,7 @@ from langchain_community.document_loaders import PyMuPDFLoader  # Better PDF par
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from app.core.logging import get_logger  # Use your existing logger
-from app.api.error_handlers import CustomException
+from app.api.error_handlers import CustomExceptionError
 logger = get_logger(__name__)
 
 class PDFRAGSystem:
@@ -98,7 +98,7 @@ class PDFRAGSystem:
             
         except Exception as e:
             logger.error(f"RAG processing failed: {str(e)}")
-            raise CustomException(f"RAG system error: {str(e)}")
+            raise CustomExceptionError("RAG system error") from e
 
 # Usage example
 

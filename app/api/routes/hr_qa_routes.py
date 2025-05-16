@@ -1,8 +1,10 @@
 import os
-from fastapi import APIRouter,Body,HTTPException, status
+from typing import Any
+
+from fastapi import APIRouter, Body, HTTPException, status
+
 from app.core.logging import get_logger
 from app.service.hr_qa_service import HRQuestionAnswerService
-from typing import Dict, Any
 
 router = APIRouter(
     prefix="/api/hr-qa",
@@ -14,7 +16,7 @@ router = APIRouter(
 logger = get_logger(__name__)
 
 @router.post("/answer",
-            response_model=Dict[str, Any],
+            response_model=dict[str, Any],
             summary="Get HR policy answer",
             description="Processes HR-related questions using RAG system",
             responses={
@@ -45,7 +47,7 @@ async def hr_qa_check(request:str = Body(...)):
             logger.warning("Received empty answer for query")
             return {
             "status": "Failed",
-            "response": 'now answer',
+            "response": "now answer",
             "message": "Job analysis completed successfully"
         }
         
@@ -61,10 +63,10 @@ async def hr_qa_check(request:str = Body(...)):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(ve)
-        )
+        ) from ve
     except Exception as e:
         logger.exception(f"Failed to process query: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error while processing request"
-        )
+        ) from e

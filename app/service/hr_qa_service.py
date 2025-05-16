@@ -1,10 +1,10 @@
-import os
-from typing import Dict, Any
-from crewai import Agent, Task, Crew, Process
+
+from crewai import Agent, Crew, Process, Task
+
+from app.api.error_handlers import CustomExceptionError
+from app.core.logging import get_logger
 from app.llm.provider import GoogleProvider
 from app.rag.rag_system import PDFRAGSystem
-from app.core.logging import get_logger
-from app.api.error_handlers import CustomException
 from app.schemas.rag_tool import RetrieverTool
 from app.utils.yaml_config import load_yaml_configs
 
@@ -31,8 +31,8 @@ class HRQuestionAnswerService:
     def __init__(self,pdf_path: str = "data/hr_qa/hr_qa.pdf"):
         """Initialize the service with configurations, LLM, and tools."""
         self.config_paths = {
-            'agents': 'app/agents_config/hr_qa_agent/agents.yaml',
-            'tasks': 'app/agents_config/hr_qa_agent/tasks.yaml'
+            "agents": "app/agents_config/hr_qa_agent/agents.yaml",
+            "tasks": "app/agents_config/hr_qa_agent/tasks.yaml"
         }
         self.rag_system = PDFRAGSystem()
         self._initialize_retriever(pdf_path)
@@ -49,11 +49,11 @@ class HRQuestionAnswerService:
         """Load agent and task configurations from YAML files."""
         try:
             self.configs = load_yaml_configs(self.config_paths)
-            self.agents_config = self.configs['agents']
-            self.tasks_config = self.configs['tasks']
+            self.agents_config = self.configs["agents"]
+            self.tasks_config = self.configs["tasks"]
         except Exception as e:
             logger.error(f"Failed to load configurations: {e}")
-            raise CustomException(f"Configuration loading failed: {e}")
+            raise CustomExceptionError("Configuration loading failed:") from e
     
     def _initialize_llm(self) -> None:
         """Initialize the language model."""
@@ -61,7 +61,7 @@ class HRQuestionAnswerService:
             self.llm = GoogleProvider().gemini_llm()
         except Exception as e:
             logger.error(f"LLM initialization failed: {e}")
-            raise CustomException(f"LLM initialization failed: {e}")
+            raise CustomExceptionError("LLM initialization failed: ") from e
     
     def _initialize_retriever(self,pdf_path) -> None:
         """Initialize the document retriever."""
@@ -75,52 +75,52 @@ class HRQuestionAnswerService:
             self.hr_tool = RetrieverTool(retriever=self.retriever)
         except Exception as e:
             logger.error(f"Retriever initialization failed: {e}")
-            raise CustomException(f"Retriever initialization failed: {e}")
+            raise CustomExceptionError("Retriever initialization failed:") from e
     
     def _initialize_agents(self) -> None:
         """Initialize all agents with their configurations."""
         try:
             self.agents = {
-                'research': Agent(
+                "research": Agent(
                     llm=self.llm,
                     tools=[self.hr_tool],
-                    **self.agents_config['research_agent']
+                    **self.agents_config["research_agent"]
                 ),
-                'formulation': Agent(
+                "formulation": Agent(
                     llm=self.llm,
-                    **self.agents_config['formulation_agent']
+                    **self.agents_config["formulation_agent"]
                 ),
-                'qa': Agent(
+                "qa": Agent(
                     llm=self.llm,
-                    **self.agents_config['qa_agent']
+                    **self.agents_config["qa_agent"]
                 )
             }
         except Exception as e:
             logger.error(f"Agent initialization failed: {e}")
-            raise CustomException(f"Agent initialization failed: {e}")
+            raise CustomExceptionError("Agent initialization failed: ") from e
     
     def _initialize_tasks(self) -> None:
         """Initialize all tasks with their configurations."""
         try:
             self.research_task = Task(
-                **self.tasks_config['research_task'],
-                agent=self.agents['research']
+                **self.tasks_config["research_task"],
+                agent=self.agents["research"]
             )
             
             self.formulation_task = Task(
-                **self.tasks_config['formulation_task'],
-                agent=self.agents['formulation'],
+                **self.tasks_config["formulation_task"],
+                agent=self.agents["formulation"],
                 context=[self.research_task]
             )
             
             self.qa_task = Task(
-                **self.tasks_config['qa_task'],
-                agent=self.agents['qa'],
+                **self.tasks_config["qa_task"],
+                agent=self.agents["qa"],
                 context=[self.formulation_task]
             )
         except Exception as e:
             logger.error(f"Task initialization failed: {e}")
-            raise CustomException(f"Task initialization failed: {e}")
+            raise CustomExceptionError("Task initialization failed") from e
 
     def get_answer(self, query: str) -> str:
         """
@@ -146,13 +146,13 @@ class HRQuestionAnswerService:
                 process=Process.sequential
             )
             
-            result = crew.kickoff(inputs={'query': query})
+            result = crew.kickoff(inputs={"query": query})
             logger.info("Successfully generated HR answer")
             return result.raw
             
         except Exception as e:
             logger.error(f"Failed to generate HR answer: {e}", exc_info=True)
-            raise CustomException(f"HR QA service error: {e}")
+            raise CustomExceptionError("HR QA service error:") from e
 
 # Singleton instance for the service
 hr_qa_service = HRQuestionAnswerService()

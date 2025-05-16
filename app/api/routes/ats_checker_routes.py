@@ -10,14 +10,26 @@ Endpoints:
 """
 
 import os
-from typing import Dict, Any
+from typing import Any
 
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Depends, Query, status
+from fastapi import (
+    APIRouter,
+    Depends,
+    Form,
+    HTTPException,
+    UploadFile,
+    status,
+)
 from fastapi.responses import JSONResponse
-from app.schemas.validator import JobDescriptionValidator,ATSCheckResponse,validate_resume_file
+
+from app.api.error_handlers import CustomExceptionError
 from app.core.logging import get_logger
+from app.schemas.validator import (
+    ATSCheckResponse,
+    JobDescriptionValidator,
+    validate_resume_file,
+)
 from app.service.ats_checker_service import ATSCheckerService
-from app.api.error_handlers import CustomException
 
 # Initialize module logger
 logger = get_logger(__name__)
@@ -32,7 +44,7 @@ router = APIRouter(
     }
 )
 
-
+depends = Depends(validate_resume_file)
 @router.post(
     "/check", 
     response_model=ATSCheckResponse,
@@ -41,9 +53,9 @@ router = APIRouter(
     status_code=status.HTTP_200_OK
 )
 async def check_resume_ats_compatibility(
-    file: UploadFile = Depends(validate_resume_file),
+    file: UploadFile =depends,
     job_description: str = Form(..., description="Full job description text")
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Analyze a resume against a job description for ATS compatibility.
     
@@ -94,24 +106,24 @@ async def check_resume_ats_compatibility(
         return JSONResponse(content={
             "response": report
         }, status_code=200)        
-    except CustomException as e:
+    except CustomExceptionError as e:
         # Handle service-level exceptions
         logger.error(f"ATS service error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"ATS analysis error: {str(e)}"
-        )
+        ) from e
     except ValueError as e:
         # Handle validation errors
         logger.error(f"Validation error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
-        )
+        ) from e
     except Exception as e:
         # Handle unexpected errors
         logger.error(f"Unexpected error in ATS check endpoint: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected error occurred during ATS analysis"
-        )
+        ) from e

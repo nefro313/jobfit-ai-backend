@@ -1,6 +1,7 @@
 import json
-import re
 import os
+import re
+
 
 class JSONValidator:
     def __init__(self, file_path):
@@ -24,7 +25,7 @@ class JSONValidator:
             return None
             
         try:
-            with open(self.file_path, 'r', encoding='utf-8') as file:
+            with open(self.file_path, encoding="utf-8") as file:
                 return file.read()
         except Exception as e:
             print(f"Error reading file: {e}")
@@ -45,7 +46,7 @@ class JSONValidator:
             
         # Remove markdown code block syntax if present
         # Pattern matches ```json at the start and ``` at the end
-        pattern = r'^```json(.*?)```$'
+        pattern = r"^```json(.*?)```$"
         match = re.search(pattern, json_str, re.DOTALL)
         
         if match:
@@ -101,7 +102,7 @@ class JSONValidator:
                 json_data = json.loads(cleaned_content)
                 
                 # Write back to file with proper formatting
-                with open(self.file_path, 'w', encoding='utf-8') as file:
+                with open(self.file_path, "w", encoding="utf-8") as file:
                     json.dump(json_data, file, indent=2)
                 
                 print(f"Cleaned and saved JSON to {self.file_path}")

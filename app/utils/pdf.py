@@ -1,6 +1,6 @@
 import os
-
 from typing import Any, Optional
+
 
 class PDFProcessor:
     """
@@ -25,7 +25,7 @@ class PDFProcessor:
         # Remove potentially harmful characters
         safe_filename = "".join(
             c for c in filename 
-            if c.isalnum() or c in ('-', '_', '.')
+            if c.isalnum() or c in ("-", "_", ".")
         ).rstrip()
         
         # Ensure unique filename
@@ -47,9 +47,9 @@ class PDFProcessor:
         
         # Save file
         try:
-            with open(file_path, 'wb') as buffer:
+            with open(file_path, "wb") as buffer:
                 buffer.write(self.file.file.read())
             return file_path
-        except IOError as e:
-            raise IOError(f"Failed to save file: {e}")
+        except OSError as e:
+            raise OSError("Failed to save file") from e
 

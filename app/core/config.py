@@ -1,7 +1,6 @@
 import os
-from typing import List
-from pydantic_settings import BaseSettings
 
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -9,7 +8,7 @@ class Settings(BaseSettings):
     API_PREFIX: str = "/api"
     
     # CORS settings
-    CORS_ORIGINS: List[str] = ["*"]
+    CORS_ORIGINS: list[str] = ["*"]
     
     # LLM settings
     GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY")

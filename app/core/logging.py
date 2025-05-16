@@ -9,20 +9,19 @@ This module provides a comprehensive logging setup that combines:
 5. Rotating file handlers to manage log file sizes
 """
 
-import os
-import sys
 import logging
 import logging.handlers
+import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Optional
 
 # Import settings conditionally to handle initialization order
 try:
     from app.core.config import settings
 except ImportError:
     # If settings not available, use defaults
-    settings = type('Settings', (), {'LOG_LEVEL': 'INFO'})
+    settings = type("Settings", (), {"LOG_LEVEL": "INFO"})
 
 
 class CustomLogger:
@@ -38,7 +37,7 @@ class CustomLogger:
     _initialized = False  # Track if logger has been initialized
     
     @classmethod
-    def get_instance(cls, **kwargs) -> 'CustomLogger':
+    def get_instance(cls, **kwargs) -> "CustomLogger":
         """Get or create the singleton logger instance"""
         if cls._instance is None:
             cls._instance = cls(**kwargs)
@@ -68,7 +67,7 @@ class CustomLogger:
             
         self.app_name = app_name
         self.log_dir = Path(log_dir)
-        self.log_level = log_level or getattr(settings, 'LOG_LEVEL', 'INFO')
+        self.log_level = log_level or getattr(settings, "LOG_LEVEL", "INFO")
         self.enable_session_dirs = enable_session_dirs
         
         # Determine numeric log level
@@ -82,7 +81,7 @@ class CustomLogger:
         
         # Create session directory if enabled
         if self.enable_session_dirs:
-            self.timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             self.session_dir = self.log_dir / self.timestamp
             self.session_dir.mkdir(exist_ok=True)
             self.log_path = self.session_dir
@@ -121,8 +120,8 @@ class CustomLogger:
         console_handler.setLevel(self.console_level)
         
         console_format = logging.Formatter(
-            '%(asctime)s - %(levelname)-8s - %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S'
+            "%(asctime)s - %(levelname)-8s - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S"
         )
         console_handler.setFormatter(console_format)
         self.root_logger.addHandler(console_handler)
@@ -130,20 +129,20 @@ class CustomLogger:
     def _setup_file_handlers(self):
         """Set up file handlers for different log levels"""
         handlers = {
-            'debug': (logging.DEBUG, 'debug.log'),
-            'info': (logging.INFO, 'info.log'),
-            'warning': (logging.WARNING, 'warning.log'),
-            'error': (logging.ERROR, 'error.log')
+            "debug": (logging.DEBUG, "debug.log"),
+            "info": (logging.INFO, "info.log"),
+            "warning": (logging.WARNING, "warning.log"),
+            "error": (logging.ERROR, "error.log")
         }
         
         detailed_format = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - '
-            '[%(filename)s:%(lineno)d:%(funcName)s] - '
-            '%(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S'
+            "%(asctime)s - %(name)s - %(levelname)s - "
+            "[%(filename)s:%(lineno)d:%(funcName)s] - "
+            "%(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S"
         )
         
-        for name, (level, filename) in handlers.items():
+        for _, (level, filename) in handlers.items():
             # Skip handlers for levels below the configured level
             if level < self.numeric_level:
                 continue
@@ -152,7 +151,7 @@ class CustomLogger:
                 self.log_path / filename,
                 maxBytes=10*1024*1024,  # 10 MB
                 backupCount=5,
-                encoding='utf-8'
+                encoding="utf-8"
             )
             file_handler.setLevel(level)
             file_handler.setFormatter(detailed_format)

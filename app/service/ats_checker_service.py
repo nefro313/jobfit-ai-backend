@@ -6,22 +6,22 @@ using a crew of AI agents.
 """
 
 import io
-from typing import Dict, Any, Tuple
+from typing import Any
 
-from crewai import Agent, Task, Crew
+from crewai import Agent, Crew, Task
 
+from app.api.error_handlers import CustomExceptionError
+from app.core.logging import get_logger
 from app.llm.provider import GoogleProvider
 from app.utils.parse_pdf import extract_text_from_pdf
 from app.utils.yaml_config import load_yaml_configs
-from app.core.logging import get_logger
-from app.api.error_handlers import CustomException
 
 logger = get_logger(__name__)
 
 # yaml file path initialize
 yaml_file_path = {
-    'agents': 'app/agents_config/ats_checker_config/agents.yaml',
-    'tasks': 'app/agents_config/ats_checker_config/tasks.yaml'
+    "agents": "app/agents_config/ats_checker_config/agents.yaml",
+    "tasks": "app/agents_config/ats_checker_config/tasks.yaml"
 }
 
 class ATSCheckerService:
@@ -36,39 +36,39 @@ class ATSCheckerService:
             return GoogleProvider().gemini_llm()
         except Exception as e:
             logger.error("Failed to initialize LLM provider", exc_info=True)
-            raise CustomException(e)
+            raise CustomExceptionError("Failed to initialize LLM provider") from e
 
-    def _initialize_agents_and_tasks(self) -> Tuple[list, list]:
+    def _initialize_agents_and_tasks(self) -> tuple[list, list]:
         try:
             logger.debug("Initializing ATS checker agents and tasks")
-            agents_config = self.configs['agents']
-            tasks_config = self.configs['tasks']
+            agents_config = self.configs["agents"]
+            tasks_config = self.configs["tasks"]
 
             agents = {
-                'resume_parser': Agent(llm=self.llm_provider, **agents_config['resume_parser']),
-                'job_description_analyzer': Agent(llm=self.llm_provider, **agents_config['job_description_analyzer']),
-                'keyword_matcher': Agent(llm=self.llm_provider, **agents_config['keyword_matcher']),
-                'scoring_agent': Agent(llm=self.llm_provider, **agents_config['scoring_agent']),
-                'feedback_agent': Agent(llm=self.llm_provider, **agents_config['feedback_agent'])
+                "resume_parser": Agent(llm=self.llm_provider, **agents_config["resume_parser"]),
+                "job_description_analyzer": Agent(llm=self.llm_provider, **agents_config["job_description_analyzer"]),
+                "keyword_matcher": Agent(llm=self.llm_provider, **agents_config["keyword_matcher"]),
+                "scoring_agent": Agent(llm=self.llm_provider, **agents_config["scoring_agent"]),
+                "feedback_agent": Agent(llm=self.llm_provider, **agents_config["feedback_agent"])
             }
 
             tasks = [
-                Task(**tasks_config['parse_task'], agent=agents['resume_parser']),
-                Task(**tasks_config['jd_analysis_task'], agent=agents['job_description_analyzer']),
-                Task(**tasks_config['match_task'], agent=agents['keyword_matcher']),
-                Task(**tasks_config['score_task'], agent=agents['scoring_agent']),
-                Task(**tasks_config['feedback_task'], agent=agents['feedback_agent'])
+                Task(**tasks_config["parse_task"], agent=agents["resume_parser"]),
+                Task(**tasks_config["jd_analysis_task"], agent=agents["job_description_analyzer"]),
+                Task(**tasks_config["match_task"], agent=agents["keyword_matcher"]),
+                Task(**tasks_config["score_task"], agent=agents["scoring_agent"]),
+                Task(**tasks_config["feedback_task"], agent=agents["feedback_agent"])
             ]
 
             return list(agents.values()), tasks
         except KeyError as e:
             logger.error(f"Missing configuration key: {e}", exc_info=True)
-            raise CustomException(e)
+            raise CustomExceptionError("Missing configuration key") from e
         except Exception as e:
             logger.error("Failed to initialize agents or tasks", exc_info=True)
-            raise CustomException(e)
+            raise CustomExceptionError("Missing configuration key") from e
 
-    def analyze(self, file_bytes: bytes, job_description: str) -> Dict[str, Any]:
+    def analyze(self, file_bytes: bytes, job_description: str) -> dict[str, Any]:
         """
         Run ATS analysis on the resume file and job description.
 
@@ -85,8 +85,8 @@ class ATSCheckerService:
             logger.debug(f"Extracted {len(resume_text)} characters from resume")
 
             input_data = {
-                'resume_text': resume_text,
-                'job_description': job_description
+                "resume_text": resume_text,
+                "job_description": job_description
             }
 
             ats_crew = Crew(
@@ -102,4 +102,4 @@ class ATSCheckerService:
 
         except Exception as e:
             logger.error(f"ATS analysis failed: {str(e)}", exc_info=True)
-            raise CustomException(e)
+            raise CustomExceptionError("ATS analysis failed:") from e

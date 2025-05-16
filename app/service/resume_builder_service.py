@@ -1,28 +1,25 @@
-import os
-import yaml
-from typing import Dict, Any, Optional
-from pydantic import ValidationError
 import json
+import os
+from typing import Any, Dict, Optional  # noqa: UP035
 
+import yaml
+from crewai import Agent, Crew, Task
+from crewai_tools import PDFSearchTool, ScrapeWebsiteTool, SerperDevTool
+from pydantic import ValidationError
+
+from app.api.error_handlers import CustomExceptionError
 from app.core.config import settings
 from app.core.logging import get_logger
-from app.schemas.resume_schema import ResumeData
-from app.utils.pdf import PDFProcessor
-from app.utils.json_validator import  validate_tailor_resume_json
-from app.utils.file_handler import FileHandler
-from app.utils.yaml_config import load_yaml_configs
 from app.llm.provider import GoogleProvider
-
-from crewai import Agent, Task, Crew, Process
-from crewai_tools import (
-    ScrapeWebsiteTool,
-    SerperDevTool,
-    PDFSearchTool
-)
+from app.schemas.resume_schema import ResumeData
+from app.utils.file_handler import FileHandler
+from app.utils.json_validator import validate_tailor_resume_json
+from app.utils.pdf import PDFProcessor
+from app.utils.yaml_config import load_yaml_configs
 
 yaml_file_path = {
-    'agents': 'app/agents_config/resume_builder/agents.yaml',
-    'tasks': 'app/agents_config/resume_builder/tasks.yaml'
+    "agents": "app/agents_config/resume_builder/agents.yaml",
+    "tasks": "app/agents_config/resume_builder/tasks.yaml"
 }
 
 class ResumeBuilderService:
@@ -44,7 +41,7 @@ class ResumeBuilderService:
         self.scrape_tool = ScrapeWebsiteTool()
 
         # Upload directory configuration
-        self.upload_directory = 'data/uploads'
+        self.upload_directory = "data/uploads"
         os.makedirs(self.upload_directory, exist_ok=True)
         self.configs = load_yaml_configs(yaml_file_path)
 
@@ -54,35 +51,35 @@ class ResumeBuilderService:
         self.tasks = self._initialize_tasks()
     
     
-    def _initialize_agents(self) -> Dict[str, Agent]:
+    def _initialize_agents(self) -> dict[str, Agent]:
         """
         Initialize AI agents for resume building
         
         :return: Dictionary of initialized agents
         """
-        agents_config = self.configs['agents']
+        agents_config = self.configs["agents"]
         
         try:
             agents = {
-                'researcher': Agent(
-                    **agents_config['researcher_agent'],
+                "researcher": Agent(
+                    **agents_config["researcher_agent"],
                     llm=self.llm,
                     tools=[self.scrape_tool, self.search_tool],                    
                 ),
-                'profiler': Agent(
-                    **agents_config['profiler_agent'],
+                "profiler": Agent(
+                    **agents_config["profiler_agent"],
                     llm=self.llm,
                     tools=[self.scrape_tool, self.search_tool]
                 ),
-                'resume_strategist': Agent(
-                    **agents_config['resume_strategist_agent'],
+                "resume_strategist": Agent(
+                    **agents_config["resume_strategist_agent"],
                     llm=self.llm,
                     instructions = "Always format your responses as valid JSON objects. Never include plain text.",
                     
                     tools=[self.scrape_tool, self.search_tool]
                 ),
-                'interview_preparer': Agent(
-                    **agents_config['interview_preparer_agent'],
+                "interview_preparer": Agent(
+                    **agents_config["interview_preparer_agent"],
                     llm=self.llm,
                     tools=[self.scrape_tool, self.search_tool]
                 )
@@ -90,54 +87,54 @@ class ResumeBuilderService:
             return agents
         except KeyError as e:
             self.logger.error(f"Agent configuration missing: {e}")
-            raise ValueError(f"Missing agent configuration: {e}")
+            raise CustomExceptionError("Missing agent configuration: ") from e
     
-    def _initialize_tasks(self) -> Dict[str, Task]:
+    def _initialize_tasks(self) -> dict[str, Task]:
         """
         Initialize tasks for resume building process
         
         :return: Dictionary of initialized tasks
         """
-        tasks_config = self.configs['tasks']
-        reusume_tailor_path = 'data/json/tailor_resume.json'
+        tasks_config = self.configs["tasks"]
+        reusume_tailor_path = "data/json/tailor_resume.json"
         
         try:
             # Create tasks referencing initialized agents
             research_task = Task(
-                **tasks_config['research_task'],
-                agent=self.agents['researcher'],
+                **tasks_config["research_task"],
+                agent=self.agents["researcher"],
                 async_execution=True
             )
             
             profile_task = Task(
-                **tasks_config['profile_task'],
-                agent=self.agents['profiler'],
+                **tasks_config["profile_task"],
+                agent=self.agents["profiler"],
                 async_execution=True
             )
             
             resume_strategy_task = Task(
-                **tasks_config['resume_strategy_task'],
+                **tasks_config["resume_strategy_task"],
                 output_json=ResumeData,
                 output_file=reusume_tailor_path,
                 context=[research_task, profile_task],
-                agent=self.agents['resume_strategist']
+                agent=self.agents["resume_strategist"]
             )
             
             interview_preparation_task = Task(
-                **tasks_config['interview_preparation_task'],
+                **tasks_config["interview_preparation_task"],
                 context=[research_task, profile_task, resume_strategy_task],
-                agent=self.agents['interview_preparer']
+                agent=self.agents["interview_preparer"]
             )
             
             return {
-                'research': research_task,
-                'profile': profile_task,
-                'resume_strategy': resume_strategy_task,
-                'interview_prep': interview_preparation_task
+                "research": research_task,
+                "profile": profile_task,
+                "resume_strategy": resume_strategy_task,
+                "interview_prep": interview_preparation_task
             }
         except KeyError as e:
             self.logger.error(f"Task configuration missing: {e}")
-            raise ValueError(f"Missing task configuration: {e}")
+            raise CustomExceptionError("Missing task configuration: ") from e
     
     def generate_resume(
         self, 
@@ -145,7 +142,7 @@ class ResumeBuilderService:
         job_posting_url: str, 
         github_url: Optional[str] = None, 
         personal_writeup: Optional[str] = None
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Generate a tailored resume using AI agents
         
@@ -157,7 +154,7 @@ class ResumeBuilderService:
         """
         try:
             # Process PDF file
-            reusume_tailor_path = 'data/json/tailor_resume.json'
+            reusume_tailor_path = "data/json/tailor_resume.json"
             pdf_processor = PDFProcessor(resume_file)
             print(self.upload_directory)
             processed_file_path = pdf_processor.save_file(self.upload_directory)
@@ -184,9 +181,9 @@ class ResumeBuilderService:
             
             # Update agent tools with PDF search
             for agent in [
-                self.agents['profiler'], 
-                self.agents['resume_strategist'], 
-                self.agents['interview_preparer']
+                self.agents["profiler"], 
+                self.agents["resume_strategist"], 
+                self.agents["interview_preparer"]
             ]:
                 agent.tools.append(pdf_search_tool)
             
@@ -200,9 +197,9 @@ class ResumeBuilderService:
             
             # Prepare inputs
             inputs = {
-                'job_posting_url': job_posting_url,
-                'github_url': github_url or '',
-                'personal_writeup': personal_writeup or ''
+                "job_posting_url": job_posting_url,
+                "github_url": github_url or "",
+                "personal_writeup": personal_writeup or ""
             }
             
                     
@@ -212,18 +209,19 @@ class ResumeBuilderService:
                 try:
                     validate_tailor_resume_json(reusume_tailor_path)
                 except Exception as e:
-                    print(f'{reusume_tailor_path}--{e}')
+                    print(f"{reusume_tailor_path}--{e}")
             markdown_result_raw = result.raw
 
 
             markdown_result = markdown_result_raw.replace("```markdown", "").replace("```", "").strip()
 
-
+            with open("data/json/tailor_resume.json") as json_file:
+                        json_data = json.load(json_file)
 
             return {
-                'status': 'success',
-                'result': markdown_result,
-                'output_files': 'data/json/tailor_resume.json'
+                "status": "success",
+                "result": markdown_result,
+                "tailo_resume_json": json_data
             }
                 
             
@@ -231,16 +229,16 @@ class ResumeBuilderService:
         except ValidationError as ve:
             self.logger.error(f"Input validation error: {ve}")
             return {
-                'status': 'error',
-                'message': 'Invalid input data',
-                'details': str(ve)
+                "status": "error",
+                "message": "Invalid input data",
+                "details": str(ve)
             }
         except Exception as e:
             self.logger.error(f"Resume generation error: {e}")
             return {
-                'status': 'error',
-                'message': 'Failed to generate resume',
-                'details': str(e)
+                "status": "error",
+                "message": "Failed to generate resume",
+                "details": str(e)
             }
         finally:
             # Clean up temporary files if needed

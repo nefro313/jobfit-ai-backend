@@ -1,6 +1,8 @@
-from PyPDF2 import PdfReader
-from typing import Union
 from io import BytesIO
+from typing import Union
+
+from pypdf import PdfReader
+
 
 def extract_text_from_pdf(pdf_file: Union[str, BytesIO]) -> str:
     """

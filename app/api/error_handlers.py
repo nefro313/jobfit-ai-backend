@@ -1,6 +1,6 @@
 import sys
-from typing import Type
 from dataclasses import dataclass
+
 
 @dataclass
 class ErrorLocation:
@@ -12,7 +12,8 @@ class ErrorLocation:
     line_number: int
     error_message: str
 
-class CustomException(Exception):
+
+class CustomExceptionError(Exception):
     """
     A custom exception class that provides detailed error information
     including the file name and line number where the error occurred.
@@ -22,9 +23,9 @@ class CustomException(Exception):
             # Some code that might raise an error
             result = 1 / 0
         except Exception as e:
-            raise CustomException(e)
+            raise CustomExceptionError(e) from e
     """
-    
+
     def __init__(self, error: Exception) -> None:
         """
         Initialize the custom exception with error details.
@@ -34,7 +35,7 @@ class CustomException(Exception):
         """
         self.error_location = self._get_error_details(error)
         super().__init__(str(self))
-    
+
     def _get_error_details(self, error: Exception) -> ErrorLocation:
         """
         Extract error details from the system's exception info.
@@ -48,13 +49,13 @@ class CustomException(Exception):
         _, _, exc_tb = sys.exc_info()
         if exc_tb is None:
             return ErrorLocation("unknown", 0, str(error))
-            
+
         return ErrorLocation(
             filename=exc_tb.tb_frame.f_code.co_filename,
             line_number=exc_tb.tb_lineno,
-            error_message=str(error)
+            error_message=str(error),
         )
-    
+
     def __str__(self) -> str:
         """
         Create a formatted error message string.
