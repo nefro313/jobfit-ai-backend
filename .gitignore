@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 data/uploads
 data/json
+chroma_db
 # C extensions
 *.so
 
