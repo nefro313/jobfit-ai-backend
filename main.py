@@ -1,18 +1,22 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
-from fastapi import Request
 from fastapi.middleware.cors import CORSMiddleware
-# import logging
+from fastapi.responses import JSONResponse
 
+from app.api.routes import (
+    ats_checker_routes,
+    hr_qa_routes,
+    jp_analyser_routes,
+    resume_tailor,
+)
+
+# import logging
 from app.core.config import settings
 from app.core.logging import setup_logging
 
-from app.api.routes import ats_checker_routes,hr_qa_routes,jp_analyser_routes,resume_tailor
-
 # Setup logging
-logger = setup_logging(app_name='jobfit-ai',log_level=settings.LOG_LEVEL)
+logger = setup_logging(app_name="jobfit-ai",log_level=settings.LOG_LEVEL)
 
 # Create FastAPI app
 app = FastAPI(
