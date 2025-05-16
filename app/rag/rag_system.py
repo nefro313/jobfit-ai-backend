@@ -1,11 +1,15 @@
-from typing import List, Optional
+from typing import List
 import re
+
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyMuPDFLoader  # Better PDF parser
-from langchain_community.vectorstores import FAISS
+# Swap out FAISS for Chroma
+from langchain_community.vectorstores import Chroma
+
 from langchain_huggingface import HuggingFaceEmbeddings
 from app.core.logging import get_logger  # Use your existing logger
 from app.api.error_handlers import CustomExceptionError
+
 logger = get_logger(__name__)
 
 class PDFRAGSystem:
@@ -27,10 +31,13 @@ class PDFRAGSystem:
         chunk_size: int = 1200,
         chunk_overlap: int = 240,
         model_name: str = "BAAI/bge-small-en-v1.5",  # Better retrieval performance
-        device: str = "cpu"
+        device: str = "cpu",
+        persist_directory: str = "./chroma_db"      # where to store the Chroma data files
     ):
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
+        self.persist_directory = persist_directory
+
         self.embedder = HuggingFaceEmbeddings(
             model_name=model_name,
             model_kwargs={'device': device},
@@ -56,13 +63,13 @@ class PDFRAGSystem:
         cleaned_content = self._clean_text(page_content)
         return self.text_splitter.split_text(cleaned_content)
 
-    def load_and_process(self, pdf_path: str) -> FAISS:
+    def load_and_process(self, pdf_path: str) -> Chroma:
         """
-        End-to-end processing pipeline:
+        End-to-end processing pipeline using Chroma:
         1. Load PDF with metadata preservation
         2. Page-based cleaning and splitting
         3. Semantic chunking
-        4. Vector store creation
+        4. Vector store creation in Chroma
         """
         try:
             logger.info(f"Initializing RAG processing for {pdf_path}")
@@ -76,12 +83,12 @@ class PDFRAGSystem:
             # Page-based processing
             processed_chunks = []
             for idx, page in enumerate(pages):
-                chunks = self._process_page(page.page_content, idx+1)
+                chunks = self._process_page(page.page_content, idx + 1)
                 for chunk in chunks:
                     processed_chunks.append({
                         "text": chunk,
                         "metadata": {
-                            "page": idx+1,
+                            "page": idx + 1,
                             "source": pdf_path,
                             "char_length": len(chunk)
                         }
@@ -89,16 +96,16 @@ class PDFRAGSystem:
             
             logger.info(f"Generated {len(processed_chunks)} semantic chunks")
             
-            # Create vector store
-            return FAISS.from_texts(
-                texts=[chunk["text"] for chunk in processed_chunks],
+            # Create Chroma vector store
+            return Chroma.from_texts(
+                texts=[c["text"] for c in processed_chunks],
                 embedding=self.embedder,
-                metadatas=[chunk["metadata"] for chunk in processed_chunks]
+                metadatas=[c["metadata"] for c in processed_chunks],
+                persist_directory=self.persist_directory,
+                collection_name="pdf_chunks"  # you can name this whatever you like
             )
             
         except Exception as e:
             logger.error(f"RAG processing failed: {str(e)}")
             raise CustomExceptionError("RAG system error") from e
-
-# Usage example
 
