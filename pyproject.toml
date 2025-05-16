@@ -1,0 +1,31 @@
+[tool.ruff]
+# Formatter and global exclusions
+line-length = 88                         # matches Black’s default :contentReference[oaicite:0]{index=0}  
+exclude = [                             # skip VCS, caches, data, venv, and heavy folders :contentReference[oaicite:1]{index=1}
+  ".git",
+  ".github",
+  ".gitignore",
+  "__pycache__",
+  "data",
+  ".venv",
+  "db",
+  "bapp/agents_config",
+  "app/rag",
+]
+fix = true                              # apply safe fixes by default :contentReference[oaicite:2]{index=2}
+
+[tool.ruff.lint]
+# Lint rule configuration (moved from top-level) :contentReference[oaicite:3]{index=3}
+select = ["A", "B", "C", "E", "F", "I", "N", "Q", "UP"]
+ignore = ["E501", "F401"]
+
+# File‑specific ignores :contentReference[oaicite:4]{index=4}
+per-file-ignores = { "tests/*.py" = ["F401"] }
+
+[tool.ruff.lint.pep8-naming]
+# Treat Pydantic validators as classmethods to satisfy N805 :contentReference[oaicite:5]{index=5}
+classmethod-decorators = [
+  "classmethod",
+  "pydantic.field_validator",
+  "pydantic.model_validator",
+]
