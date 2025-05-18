@@ -4,7 +4,9 @@ import re
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyMuPDFLoader  
 
-from langchain_community.vectorstores import Chroma
+
+from langchain_community.vectorstores import FAISS
+
 
 from langchain_huggingface import HuggingFaceEmbeddings
 from app.core.logging import get_logger  
@@ -19,12 +21,10 @@ class PDFRAGSystem:
         chunk_size: int = 1200,
         chunk_overlap: int = 240,
         model_name: str = "BAAI/bge-small-en-v1.5",  
-        device: str = "cpu",
-        persist_directory: str = "./chroma_db"      
+        device: str = "cpu",    
     ):
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
-        self.persist_directory = persist_directory
 
         self.embedder = HuggingFaceEmbeddings(
             model_name=model_name,
@@ -50,7 +50,7 @@ class PDFRAGSystem:
         cleaned_content = self._clean_text(page_content)
         return self.text_splitter.split_text(cleaned_content)
 
-    def load_and_process(self, pdf_path: str) -> Chroma:
+    def load_and_process(self, pdf_path: str) -> FAISS:
         try:
             logger.info(f"Initializing RAG processing for {pdf_path}")
             
@@ -77,12 +77,10 @@ class PDFRAGSystem:
             logger.info(f"Generated {len(processed_chunks)} semantic chunks")
             
             # Create Chroma vector store
-            return Chroma.from_texts(
+            return FAISS.from_texts(
                 texts=[c["text"] for c in processed_chunks],
                 embedding=self.embedder,
                 metadatas=[c["metadata"] for c in processed_chunks],
-                persist_directory=self.persist_directory,
-                collection_name="pdf_chunks"  
             )
             
         except Exception as e:

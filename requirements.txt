@@ -1,5 +1,5 @@
 #backend_packages
-fastapi == 0.115.9
+fastapi >= 0.115.9
 uvicorn==0.34.2
 python-dotenv==1.1.0
 python-multipart==0.0.5
@@ -14,6 +14,7 @@ pydantic==2.11.4
 # pdf packages
 PyMuPDF==1.25.5
 pypdf==5.4.0
+chromadb==0.5.23
 #langchain packages
 langchain==0.3.25
 langchain-community==0.3.23
@@ -21,7 +22,7 @@ langchain-huggingface==0.2.0
 #embedding 
 sentence-transformers==4.1.0
 #vector db and provider 
-chromadb==1.0.9
+faiss-cpu==1.11.0
 google-generativeai==0.8.5
 #testing packages
 pytest==8.3.5
