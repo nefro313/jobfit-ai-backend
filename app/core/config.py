@@ -12,8 +12,9 @@ class Settings(BaseSettings):
     
     # LLM settings
     GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY")
-    SERPER_API_KEY:str = os.getenv("SERPER_API_KEY")
     DEFAULT_LLM_PROVIDER: str = os.getenv("DEFAULT_LLM_PROVIDER", "groq")
+    #Search tool api
+    SERPER_API_KEY:str = os.getenv("SERPER_API_KEY")
     
     
     # RAG settings

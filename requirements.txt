@@ -1,21 +1,29 @@
-crewai== 0.118.0
-pydantic==2.11.4
-python-dotenv==1.1.0
+#backend_packages
 fastapi == 0.115.9
 uvicorn==0.34.2
-
-PyMuPDF==1.25.5
-pydantic-settings ==2.9.1
+python-dotenv==1.1.0
 python-multipart==0.0.5
+
+#crewai package
+crewai-tools==0.44.0
+crewai== 0.118.0
+firecrawl-py==2.5.4
+#pydatic package
+pydantic-settings ==2.9.1
+pydantic==2.11.4
+# pdf packages
+PyMuPDF==1.25.5
+pypdf==5.4.0
+#langchain packages
 langchain==0.3.25
 langchain-community==0.3.23
 langchain-huggingface==0.2.0
+#embedding 
 sentence-transformers==4.1.0
+#vector db and provider 
 chromadb==1.0.9
-pypdf==5.4.0
-firecrawl-py==2.5.4
-crewai-tools==0.44.0
 google-generativeai==0.8.5
+#testing packages
 pytest==8.3.5
 httpx==0.28.1
 ruff==0.11.10
