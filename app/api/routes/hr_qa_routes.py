@@ -55,7 +55,7 @@ async def hr_qa_check(request:str = Body(...)):
         return {
             "status": "success",
             "response": answer,
-            "message": "Job analysis completed successfully"
+            "message": "question answersed completed successfully"
         }
 
     except ValueError as ve:
