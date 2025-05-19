@@ -15,6 +15,11 @@ jobs:
   integration:
     name: Continuous Integration
     runs-on: ubuntu-latest
+    env:
+      GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+      SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
+      CORS_ORIGINS: ${{ vars.CORS_ORIGINS }}
+
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -97,7 +102,7 @@ jobs:
 
       - name: Run Docker image to serve users
         run: |
-          docker run -d -p 8080:8080 --ipc="host" --name jobfit \
+          docker run -d -p 8080:8080 --ipc="host" --name jobfitai-backend \
             -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
             -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
             -e AWS_REGION=${{ secrets.AWS_REGION }} \
