@@ -1,5 +1,5 @@
 # 1) Base image
-FROM python:3.11-slim-bookworm
+FROM python:3.11-slim
 
 WORKDIR /backend
 COPY . /backend
