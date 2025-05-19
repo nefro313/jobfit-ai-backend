@@ -95,6 +95,8 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+      - name: Clean up Docker space  
+        run: docker system prune --all --volumes --force  
 
       - name: Pull latest images
         run: |
@@ -113,4 +115,4 @@ jobs:
 
       - name: Clean previous images and container
         run: |
-          docker system prune -f
+          docker system prune --all --volumes --force
