@@ -1,5 +1,5 @@
 #backend_packages
-fastapi >= 0.115.9
+fastapi == 0.115.9
 uvicorn==0.34.2
 python-dotenv==1.1.0
 python-multipart==0.0.5
