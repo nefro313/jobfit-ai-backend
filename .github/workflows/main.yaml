@@ -14,7 +14,7 @@ permissions:
 jobs:
   integration:
     name: Continuous Integration
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
       SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
@@ -46,7 +46,7 @@ jobs:
 
   build-and-push-ecr-image:
     name: Continuous Delivery
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out code
         uses: actions/checkout@v4
