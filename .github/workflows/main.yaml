@@ -32,7 +32,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install ruff fastapi pytest httpx
+          pip install ruff fastapi pytest httpx uvicorn
 
       - name: Lint with Ruff
         run: |
