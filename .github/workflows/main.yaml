@@ -46,6 +46,7 @@ jobs:
 
   build-and-push-ecr-image:
     name: Continuous Delivery
+    needs: integration
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
