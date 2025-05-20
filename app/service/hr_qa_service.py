@@ -68,10 +68,12 @@ class HRQuestionAnswerService:
         try:
 
             self.vector_store = self.rag_system.load_and_process(pdf_path)
+            logger.info("vector store created")
             self.retriever = self.vector_store.as_retriever(
                 search_type="similarity",
                 search_kwargs={"k": 5}
             )
+            logger.info("retreived the doc")
             self.hr_tool = RetrieverTool(retriever=self.retriever)
         except Exception as e:
             logger.error(f"Retriever initialization failed: {e}")
