@@ -56,4 +56,5 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 if __name__ == "__main__":
     logger.info("Starting AI Job Application Assistant API")
+    logger.info(f"CORS Origins type: {type(settings.CORS_ORIGINS)}")
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
