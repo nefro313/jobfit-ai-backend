@@ -1,5 +1,4 @@
 # Response models for better documentation and validation
-import os
 from typing import Any
 
 from fastapi import File, HTTPException, UploadFile, status
