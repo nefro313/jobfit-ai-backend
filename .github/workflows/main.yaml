@@ -120,12 +120,6 @@ jobs:
       - name: Pull latest images
         run: |
           docker pull ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
-
-      - name: Stop and remove existing container
-        run: |
-          docker stop jofitai-backend || true
-          docker rm jofitai-backend || true
-
       - name: Run Docker image to serve users
         run: |
           docker run -d -p 8080:8080 --ipc="host" --name jofitai-backend \
