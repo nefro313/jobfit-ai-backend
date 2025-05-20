@@ -38,7 +38,7 @@ async def validate_resume_file(file: UploadFile = file_param) -> UploadFile:
     Validate uploaded resume file.
     
     Args:
-        file: Uploaded resume file
+        file: Uploaded resume file.
         
     Returns:
         UploadFile: Validated file object
