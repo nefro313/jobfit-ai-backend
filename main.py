@@ -44,11 +44,33 @@ app.include_router(ats_checker_routes.router)
 
 @app.get("/health", tags=["health"])
 async def health_check():
-    """Health check endpoint"""
+    """
+    Health check endpoint.
+
+    This endpoint can be used to verify that the API is running and responsive.
+    It returns a simple JSON response indicating the status.
+    """
     return {"status": "healthy"}
 # Add the validation error handler
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """
+    Custom exception handler for FastAPI's RequestValidationError.
+
+    This handler is triggered when request validation fails. It logs the detailed
+    validation errors and the request body for debugging purposes, and then
+    returns a JSONResponse with a 422 Unprocessable Entity status code,
+    containing the structured validation error details.
+
+    Args:
+        request (Request): The incoming request that caused the validation error.
+        exc (RequestValidationError): The exception instance containing details about
+                                     the validation failures.
+
+    Returns:
+        JSONResponse: A response object with status code 422 and content detailing
+                      the validation errors.
+    """
     logger.error(f"Validation error: {exc.errors()} | Body: {await request.body()}")
     return JSONResponse(
         status_code=422,

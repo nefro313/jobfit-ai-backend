@@ -1,3 +1,15 @@
+"""
+HR Question Answering API Routes.
+
+This module defines API endpoints for the HR Question Answering (QA) service.
+It allows users to submit HR-related questions and receive answers generated
+by the HRQuestionAnswerService, typically using a RAG (Retrieval Augmented Generation)
+system based on company policies or documents.
+
+The primary endpoint is:
+    POST /api/hr-qa/answer: Submits a question and gets an answer.
+"""
+
 import os
 from typing import Any
 
@@ -24,15 +36,29 @@ logger = get_logger(__name__)
                 400: {"description": "Invalid input format"},
                 500: {"description": "Internal processing error"}
             })
-async def hr_qa_check(request:str = Body(...)):
+async def hr_qa_check(request: str = Body(..., description="The user's HR-related question as a plain string.", example="What is the company policy on remote work?")):
     """
-    Endpoint for handling HR policy questions
-    
+    Handles HR policy-related questions and provides answers.
+
+    This endpoint receives a user's question as a plain string in the request body.
+    It then utilizes the `HRQuestionAnswerService` to find and return an appropriate
+    answer based on available HR documentation or policies.
+
     Args:
-        request: QARequest model containing user query
-    
+        request (str): The user's question submitted in the request body.
+
     Returns:
-        Standardized QAResponse with answer or error details
+        dict[str, Any]: A dictionary containing:
+            - `status` (str): "success" or "Failed".
+            - `response` (str): The answer to the question, or a message indicating no answer was found.
+            - `message` (str): A descriptive message about the outcome.
+
+    Raises:
+        HTTPException:
+            - 400 Bad Request: If the input question is invalid (e.g., empty, though
+              primary validation might be on service level).
+            - 500 Internal Server Error: If an unexpected error occurs during question
+              processing or if the HR QA service fails.
     """
     try:
         logger.info(f"Processing HR query: {request[:50]}...")

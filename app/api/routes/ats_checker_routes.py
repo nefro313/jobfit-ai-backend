@@ -1,12 +1,12 @@
 """
-ATS Checker API Routes
+ATS Checker API Routes.
 
-This module defines the API endpoints for the ATS (Applicant Tracking System) checker
-functionality. It provides routes to analyze resumes against job descriptions
-and return compatibility scores and recommendations.
+This module provides API endpoints for the ATS (Applicant Tracking System) checker.
+It allows users to upload a resume and a job description to receive an ATS
+compatibility analysis, including a score and improvement suggestions.
 
-Endpoints:
-    POST /check: Analyzes a resume against a job description and returns an ATS compatibility report
+The primary endpoint is:
+    POST /api/ats-checker/check: Analyzes resume-job description compatibility.
 """
 
 import os
@@ -53,27 +53,38 @@ depends = Depends(validate_resume_file)
     status_code=status.HTTP_200_OK
 )
 async def check_resume_ats_compatibility(
-    file: UploadFile =depends,
-    job_description: str = Form(..., description="Full job description text")
-) -> dict[str, Any]:
+    file: UploadFile = depends,
+    job_description: str = Form(..., description="The full text of the job description.")
+) -> ATSCheckResponse:
     """
-    Analyze a resume against a job description for ATS compatibility.
-    
-    This endpoint:
-    1. Validates the uploaded resume file
-    2. Validates the job description
-    3. Processes the resume through ATS simulation
-    4. Returns ATS compatibility score and improvement recommendations
-    
+    Analyzes a resume against a job description for ATS compatibility.
+
+    The endpoint expects a multipart/form-data request containing:
+    - `file`: The resume file (PDF format recommended, validated by `validate_resume_file`).
+    - `job_description`: The full text of the job description.
+
+    It performs the following steps:
+    1. Validates the uploaded resume file (e.g., type, size).
+    2. Validates the job description content.
+    3. Processes the resume and job description using the ATSCheckerService.
+    4. Returns an ATS compatibility report, including a score and recommendations.
+
     Args:
-        file: Uploaded resume (PDF format)
-        job_description: Full text of the job description
-        
+        file (UploadFile): The resume file uploaded by the user. Dependency injection
+                           handles file validation (`validate_resume_file`).
+        job_description (str): The job description text, submitted as form data.
+
     Returns:
-        Dict containing ATS compatibility report
-        
+        ATSCheckResponse: A Pydantic model containing the ATS compatibility report,
+                          including overall match score and detailed feedback.
+                          The actual response is a JSONResponse wrapping this model.
+
     Raises:
-        HTTPException: For validation or processing errors
+        HTTPException:
+            - 400 Bad Request: If resume file or job description is invalid (e.g., empty,
+              wrong format, or fails Pydantic validation).
+            - 500 Internal Server Error: If an unexpected error occurs during the
+              ATS analysis process or a service-level error is encountered.
     """
     logger.info(f"ATS check requested for file: {file.filename}")
     
