@@ -1,3 +1,11 @@
+"""
+Job Posting Analyzer Service.
+
+This module provides the `JobPostingAnalyzer` class, which is designed to analyze
+job postings from a given URL. It uses a crew of AI agents to scrape job details,
+research the company, and compile comprehensive insights about the job opportunity.
+"""
+
 from typing import Any
 
 from crewai import Agent, Crew, Task
@@ -25,15 +33,23 @@ class JobPostingAnalyzer:
     3. Compiling insights about the job opportunity
     
     Attributes:
-        llm: The language model provider
-        tools: Dictionary of available tools
-        agents_config: Configuration for agents
-        tasks_config: Configuration for tasks
-        agents: Dictionary of initialized agents
+        llm (Any): An instance of the language model provider (Google Gemini).
+        config (dict): Loaded YAML configurations for agents and tasks.
+        agents_config (dict): Specific configurations for agents, derived from `config`.
+        tasks_config (dict): Specific configurations for tasks, derived from `config`.
+        tools (dict[str, Any]): A dictionary of initialized tools (e.g., web scraper, search tool)
+                                 for agents to use.
+        agents (dict[str, Agent]): A dictionary of initialized CrewAI Agent objects.
     """
     
     def __init__(self):
-        """Initialize the analyzer with LLM, tools, and configurations."""
+        """
+        Initializes the JobPostingAnalyzer.
+
+        This constructor sets up the LLM provider (Google Gemini), loads agent and
+        task configurations from specified YAML files, and initializes the necessary
+        tools (web scraper, search tool) and CrewAI agents.
+        """
         self.llm = GoogleProvider().gemini_llm()
         self.config = load_yaml_configs(yaml_file_path)
         self.agents_config = self.config["agents"]
@@ -43,10 +59,16 @@ class JobPostingAnalyzer:
         
     def _initialize_tools(self) -> dict[str, Any]:
         """
-        Initialize and return the tools used by the agents.
+        Initializes and returns the tools required by the agents.
+
+        Currently initializes:
+        - `web_scraper`: ScrapeWebsiteTool for fetching web content.
+        - `search_tool`: SerperDevTool for performing web searches.
         
+        These tools are stored in and returned as a dictionary, which is assigned to `self.tools`.
+
         Returns:
-            Dict: Dictionary of initialized tools
+            dict[str, Any]: A dictionary mapping tool names to their initialized instances.
         """
         return {
             "web_scraper": ScrapeWebsiteTool(),
@@ -56,12 +78,19 @@ class JobPostingAnalyzer:
     
     def _initialize_agents(self) -> dict[str, Agent]:
         """
-        Initialize and return all agents with their configurations and tools.
-        
-        Returns:
-            Dict: Dictionary of initialized agents
-        """
+        Initializes and returns the CrewAI agents.
 
+        Uses configurations from `self.agents_config`, tools from `self.tools`,
+        and the LLM from `self.llm` to instantiate various agents:
+        - `job_scraper`: Agent responsible for scraping job details.
+        - `company_researcher`: Agent for researching company information.
+        - `insights_compiler`: Agent for compiling all gathered data into a report.
+        
+        The initialized agents are returned as a dictionary, assigned to `self.agents`.
+
+        Returns:
+            dict[str, Agent]: A dictionary mapping agent names to their `Agent` instances.
+        """
         return {
             "job_scraper": Agent(
                 **self.agents_config["job_scraper_agent"],
@@ -105,16 +134,22 @@ class JobPostingAnalyzer:
     
     def generate_insights(self, job_url: str) -> str:
         """
-        Generate comprehensive insights about a job posting from its URL.
+        Generates comprehensive insights about a job posting from its URL.
+
+        This method orchestrates the analysis process:
+        1. Scrapes job details from the provided `job_url` using `_scrape_job_details`.
+        2. Extracts the company name from the scraped details using `_extract_company_name`.
+        3. Researches the company using `_research_company`.
+        4. Compiles the final insights report using `_compile_insights`.
         
         Args:
-            job_url: URL of the job posting to analyze
+            job_url (str): The URL of the job posting to analyze.
             
         Returns:
-            str: Formatted insights report
+            str: A formatted insights report combining job details and company research.
             
         Raises:
-            RuntimeError: If any step in the analysis fails
+            CustomExceptionError: If any step in the analysis process fails.
         """
         try:
             # Step 1: Scrape job details
@@ -137,7 +172,19 @@ class JobPostingAnalyzer:
             raise CustomExceptionError("Job analysis failed:") from e
     
     def _scrape_job_details(self, job_url: str) -> str:
-        """Execute job scraping task and return raw details."""
+        """
+        Executes the job scraping task for the given URL.
+
+        Creates a specific task for the 'job_scraper' agent using configurations
+        from `self.tasks_config["scrape_job_task"]`. It then runs a temporary Crew
+        with this agent and task to scrape the job details.
+
+        Args:
+            job_url (str): The URL of the job posting to scrape.
+
+        Returns:
+            str: The raw text content scraped from the job posting URL.
+        """
         scrape_task = Task(
             **self.tasks_config["scrape_job_task"],
             agent=self.agents["job_scraper"]
@@ -153,7 +200,19 @@ class JobPostingAnalyzer:
         return result.raw
     
     def _research_company(self, company_name: str) -> str:
-        """Execute company research task and return raw results."""
+        """
+        Executes the company research task for the given company name.
+
+        Creates a specific task for the 'company_researcher' agent using
+        configurations from `self.tasks_config["research_company_task"]`.
+        A temporary Crew is run with this agent and task to gather company information.
+
+        Args:
+            company_name (str): The name of the company to research.
+
+        Returns:
+            str: The raw text content of the company research findings.
+        """
         research_task = Task(
             **self.tasks_config["research_company_task"],
             agent=self.agents["company_researcher"]
@@ -169,7 +228,23 @@ class JobPostingAnalyzer:
         return result.raw
     
     def _compile_insights(self, job_details: str, company_research: str) -> str:
-        """Compile final insights from job details and company research."""
+        """
+        Compiles the final insights report from job details and company research.
+
+        Creates a specific task for the 'insights_compiler' agent using
+        configurations from `self.tasks_config["compile_insights_task"]`.
+        A temporary Crew runs with this agent and task, taking the scraped
+        job details and company research as input to produce a final report.
+        
+        The output is cleaned of markdown formatting.
+
+        Args:
+            job_details (str): The scraped job details text.
+            company_research (str): The company research findings text.
+
+        Returns:
+            str: The compiled and cleaned insights report.
+        """
         compile_task = Task(
             **self.tasks_config["compile_insights_task"],
             agent=self.agents["insights_compiler"]

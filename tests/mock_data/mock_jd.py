@@ -1,3 +1,11 @@
+"""
+Mock Job Description Data.
+
+This module contains a sample job description string (`job_description`)
+intended for use in tests, particularly for functionalities involving
+job description parsing, analysis, or matching.
+"""
+
 job_description ="""
                     Job Title: Machine Learning Engineer – AI Systems
                     Location: Bengaluru, India

@@ -25,12 +25,45 @@ yaml_file_path = {
 }
 
 class ATSCheckerService:
+    """
+    A service for analyzing resumes against job descriptions using a crew of AI agents.
+
+    This service orchestrates multiple AI agents (e.g., resume parser, job description
+    analyzer, keyword matcher, scoring agent, feedback agent) to perform a comprehensive
+    ATS (Applicant Tracking System) compatibility check. It initializes an LLM provider,
+    loads agent and task configurations from YAML files, and provides an `analyze`
+    method to process resume and job description inputs.
+
+    Attributes:
+        llm_provider (Any): An instance of an LLM provider (e.g., Google Gemini).
+        configs (dict): Loaded configurations for agents and tasks from YAML files.
+        agents (list[Agent]): A list of initialized CrewAI Agent objects.
+        tasks (list[Task]): A list of initialized CrewAI Task objects.
+    """
     def __init__(self):
+        """
+        Initializes the ATSCheckerService.
+
+        This constructor sets up the LLM provider, loads agent and task
+        configurations from specified YAML files, and initializes the
+        CrewAI agents and tasks.
+        """
         self.llm_provider = self._initialize_llm_provider()
         self.configs = load_yaml_configs(yaml_file_path)
         self.agents, self.tasks = self._initialize_agents_and_tasks()
 
     def _initialize_llm_provider(self) -> Any:
+        """
+        Initializes and returns the LLM provider.
+
+        Currently configured to use Google Gemini LLM.
+
+        Returns:
+            Any: An instance of the configured LLM provider.
+
+        Raises:
+            CustomExceptionError: If the LLM provider fails to initialize.
+        """
         try:
             logger.debug("Initializing LLM provider for ATS checker")
             return GoogleProvider().gemini_llm()
@@ -38,7 +71,22 @@ class ATSCheckerService:
             logger.error("Failed to initialize LLM provider", exc_info=True)
             raise CustomExceptionError("Failed to initialize LLM provider") from e
 
-    def _initialize_agents_and_tasks(self) -> tuple[list, list]:
+    def _initialize_agents_and_tasks(self) -> tuple[list[Agent], list[Task]]:
+        """
+        Initializes and returns the CrewAI agents and tasks from configuration.
+
+        Loads agent and task definitions from YAML files specified in `yaml_file_path`,
+        using the `self.configs` attribute (loaded in `__init__`).
+        It instantiates `Agent` and `Task` objects accordingly.
+
+        Returns:
+            tuple[list[Agent], list[Task]]: A tuple containing a list of initialized
+                                           Agent objects and a list of initialized Task objects.
+
+        Raises:
+            CustomExceptionError: If there's a missing configuration key or any other
+                                  error during agent/task initialization.
+        """
         try:
             logger.debug("Initializing ATS checker agents and tasks")
             agents_config = self.configs["agents"]
@@ -70,14 +118,23 @@ class ATSCheckerService:
 
     def analyze(self, file_bytes: bytes, job_description: str) -> dict[str, Any]:
         """
-        Run ATS analysis on the resume file and job description.
+        Runs an ATS (Applicant Tracking System) analysis on a given resume and job description.
+
+        This method extracts text from the provided resume file (PDF bytes), then uses a
+        CrewAI setup (agents and tasks) to perform the analysis against the job description.
 
         Args:
-            file_bytes: Resume as PDF bytes
-            job_description: Job description text
+            file_bytes (bytes): The content of the resume file, expected in PDF format.
+            job_description (str): The full text of the job description.
 
         Returns:
-            Dict[str, Any]: Structured results from the ATS crew
+            dict[str, Any]: A dictionary containing the raw structured results from the
+                            ATS analysis crew. The exact structure depends on the final
+                            task output of the CrewAI setup.
+
+        Raises:
+            CustomExceptionError: If PDF text extraction fails, or if the CrewAI analysis
+                                  process encounters an error.
         """
         try:
             logger.info("Starting ATS compatibility analysis")
